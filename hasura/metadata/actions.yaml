@@ -1,0 +1,365 @@
+actions:
+  - name: ban_app
+    definition:
+      kind: synchronous
+      handler: '{{NEXT_API_URL}}/hasura/ban-app'
+      headers:
+        - name: Authorization
+          value_from_env: INTERNAL_ENDPOINTS_SECRET
+    permissions:
+      - role: reviewer
+    comment: Bans app by app_id
+  - name: change_app_report_status
+    definition:
+      kind: synchronous
+      handler: '{{NEXT_API_URL}}/hasura/change-app-report-status'
+      headers:
+        - name: Authorization
+          value_from_env: INTERNAL_ENDPOINTS_SECRET
+    permissions:
+      - role: reviewer
+    comment: Closes the report with a decision
+  - name: create_app_report
+    definition:
+      kind: synchronous
+      handler: '{{NEXT_API_URL}}/hasura/create-app-report'
+      headers:
+        - name: Authorization
+          value_from_env: INTERNAL_ENDPOINTS_SECRET
+    permissions:
+      - role: reviewer
+    comment: Creates an app report
+  - name: create_new_draft
+    definition:
+      kind: synchronous
+      handler: '{{NEXT_API_URL}}/hasura/create-new-draft'
+      headers:
+        - name: Authorization
+          value_from_env: INTERNAL_ENDPOINTS_SECRET
+      request_transform:
+        method: POST
+        query_params:
+          app_id: '{{$body.input.app_id}}'
+          team_id: '{{$body.input.team_id}}'
+        template_engine: Kriti
+        version: 2
+    permissions:
+      - role: user
+  - name: delete_unverified_images
+    definition:
+      kind: synchronous
+      handler: '{{NEXT_API_URL}}/hasura/delete-images'
+      headers:
+        - name: Authorization
+          value_from_env: INTERNAL_ENDPOINTS_SECRET
+    permissions:
+      - role: user
+      - role: api_key
+  - name: get_all_unverified_images
+    definition:
+      kind: ""
+      handler: '{{NEXT_API_URL}}/hasura/get-unverified-images'
+      headers:
+        - name: Authorization
+          value_from_env: INTERNAL_ENDPOINTS_SECRET
+      request_transform:
+        method: POST
+        query_params:
+          app_id: '{{$body.input.app_id}}'
+          locale: '{{$body.input?.locale}}'
+        template_engine: Kriti
+        version: 2
+    permissions:
+      - role: user
+      - role: api_key
+  - name: get_app_review_images
+    definition:
+      kind: ""
+      handler: '{{NEXT_API_URL}}/hasura/get-app-review-images'
+      headers:
+        - name: Authorization
+          value_from_env: INTERNAL_ENDPOINTS_SECRET
+      request_transform:
+        method: POST
+        query_params:
+          app_id: '{{$body.input.app_id}}'
+          locale: '{{$body.input?.locale}}'
+        template_engine: Kriti
+        version: 2
+    permissions:
+      - role: reviewer
+    comment: Used by the reviewer to get in review app images
+  - name: get_uploaded_image
+    definition:
+      kind: ""
+      handler: '{{NEXT_API_URL}}/hasura/get-image'
+      headers:
+        - name: Authorization
+          value_from_env: INTERNAL_ENDPOINTS_SECRET
+      request_transform:
+        method: POST
+        query_params:
+          app_id: '{{$body.input.app_id}}'
+          content_type_ending: '{{$body.input.content_type_ending}}'
+          image_type: '{{$body.input.image_type}}'
+          locale: '{{$body.input?.locale}}'
+        template_engine: Kriti
+        version: 2
+    permissions:
+      - role: api_key
+      - role: user
+    comment: Gets the uploaded image to display
+  - name: invalidate_cache
+    definition:
+      kind: synchronous
+      handler: '{{NEXT_API_URL}}/hasura/invalidate-cache'
+      headers:
+        - name: Authorization
+          value_from_env: INTERNAL_ENDPOINTS_SECRET
+    permissions:
+      - role: reviewer
+  - name: invite_team_members
+    definition:
+      kind: synchronous
+      handler: '{{NEXT_API_URL}}/hasura/invite-team-members'
+      headers:
+        - name: Authorization
+          value_from_env: INTERNAL_ENDPOINTS_SECRET
+    permissions:
+      - role: user
+    comment: Create invites and send emails
+  - name: reset_api_key
+    definition:
+      kind: synchronous
+      handler: '{{NEXT_API_URL}}/hasura/reset-api-key'
+      headers:
+        - name: Authorization
+          value_from_env: INTERNAL_ENDPOINTS_SECRET
+    permissions:
+      - role: user
+    comment: Reset the given API key for the developer portal
+  - name: reset_client_secret
+    definition:
+      kind: synchronous
+      handler: '{{NEXT_API_URL}}/hasura/reset-client-secret'
+      headers:
+        - name: Authorization
+          value_from_env: INTERNAL_ENDPOINTS_SECRET
+    permissions:
+      - role: api_key
+      - role: user
+    comment: Reset the client secret for a Sign in with World ID application
+  - name: unban_app
+    definition:
+      kind: synchronous
+      handler: '{{NEXT_API_URL}}/hasura/unban-app'
+      headers:
+        - name: Authorization
+          value_from_env: INTERNAL_ENDPOINTS_SECRET
+    permissions:
+      - role: reviewer
+    comment: Unbans an app
+  - name: upload_image
+    definition:
+      kind: ""
+      handler: '{{NEXT_API_URL}}/hasura/upload-image'
+      headers:
+        - name: Authorization
+          value_from_env: INTERNAL_ENDPOINTS_SECRET
+      request_transform:
+        method: POST
+        query_params:
+          app_id: '{{$body.input.app_id}}'
+          content_type_ending: '{{$body.input.content_type_ending}}'
+          image_type: '{{$body.input.image_type}}'
+          locale: '{{$body.input?.locale}}'
+        template_engine: Kriti
+        version: 2
+    permissions:
+      - role: api_key
+      - role: user
+    comment: Generates a Signed URL to upload images
+  - name: validate_localisation
+    definition:
+      kind: synchronous
+      handler: '{{NEXT_API_URL}}/hasura/validate-localisation'
+      headers:
+        - name: Authorization
+          value_from_env: INTERNAL_ENDPOINTS_SECRET
+      request_transform:
+        method: POST
+        query_params:
+          app_metadata_id: '{{$body.input.app_metadata_id}}'
+          team_id: '{{$body.input.team_id}}'
+        template_engine: Kriti
+        version: 2
+    permissions:
+      - role: user
+  - name: verify_app
+    definition:
+      kind: synchronous
+      handler: '{{NEXT_API_URL}}/hasura/verify-app'
+      headers:
+        - name: Authorization
+          value_from_env: INTERNAL_ENDPOINTS_SECRET
+      request_transform:
+        method: POST
+        query_params:
+          app_id: '{{$body.input.app_id}}'
+          is_reviewer_app_store_approved: '{{$body.input.is_reviewer_app_store_approved}}'
+          is_reviewer_world_app_approved: '{{$body.input.is_reviewer_world_app_approved}}'
+          reviewer_name: '{{$body.input.reviewer_name}}'
+        template_engine: Kriti
+        version: 2
+    permissions:
+      - role: reviewer
+    comment: Verify an App
+custom_types:
+  enums:
+    - name: ReviewStatusEnum
+      values:
+        - description: null
+          is_deprecated: null
+          value: OPEN
+        - description: null
+          is_deprecated: null
+          value: NOT_ESCALATE
+        - description: null
+          is_deprecated: null
+          value: ESCALATE
+        - description: null
+          is_deprecated: null
+          value: APPEALED
+        - description: null
+          is_deprecated: null
+          value: REVIEW
+        - description: null
+          is_deprecated: null
+          value: ACTIONED
+    - name: PurposeEnum
+      values:
+        - description: null
+          is_deprecated: null
+          value: ILLEGAL_CONTENT
+        - description: null
+          is_deprecated: null
+          value: TOS_VIOLATION
+        - description: null
+          is_deprecated: null
+          value: OTHER
+    - name: ViolationEnum
+      values:
+        - description: null
+          is_deprecated: null
+          value: FEATURES
+        - description: null
+          is_deprecated: null
+          value: CORE_FUNCTIONALITY
+        - description: null
+          is_deprecated: null
+          value: MALICIOUS_APP
+    - name: IllegalContentCategoryEnum
+      values:
+        - description: null
+          is_deprecated: null
+          value: PROVIDES_OR_FACILITATES_AN_ILLEGAL_SERVICE
+        - description: null
+          is_deprecated: null
+          value: INCITES_TERRORISM_OR_VIOLENCE
+        - description: null
+          is_deprecated: null
+          value: ILLEGAL_HATE_SPEECH
+        - description: null
+          is_deprecated: null
+          value: CHILD_SEXUAL_ABUSE
+        - description: null
+          is_deprecated: null
+          value: VIOLATES_INTELLECTUAL_PROPERTY_RIGHTS
+        - description: null
+          is_deprecated: null
+          value: VIOLATES_CONSUMER_PROTECTION_OR_PRIVACY_LAW
+        - description: null
+          is_deprecated: null
+          value: VIOLATES_ADVERTISING_LAW
+        - description: null
+          is_deprecated: null
+          value: OTHER
+    - name: AppFlowOnCompleteEnum
+      values:
+        - description: null
+          is_deprecated: null
+          value: NONE
+        - description: null
+          is_deprecated: null
+          value: VERIFY
+    - name: IllegalContentSubCategoryEnum
+      values:
+        - description: null
+          is_deprecated: null
+          value: DATA_PROTECTION_PRIVACY
+        - description: null
+          is_deprecated: null
+          value: DEFAMATION
+        - description: null
+          is_deprecated: null
+          value: ILLEGAL_OR_HARMFUL_SPEECH
+        - description: null
+          is_deprecated: null
+          value: NEGATIVE_EFFECTS_ON_CIVIC_DISCOURSE
+        - description: null
+          is_deprecated: null
+          value: NON_CONSENSUAL_BEHAVIOR
+        - description: null
+          is_deprecated: null
+          value: PORNOGRAPHY
+        - description: null
+          is_deprecated: null
+          value: PROTECTION_OF_MINORS
+        - description: null
+          is_deprecated: null
+          value: RISK_FOR_PUBLIC_SECURITY
+        - description: null
+          is_deprecated: null
+          value: SELF_HARM
+        - description: null
+          is_deprecated: null
+          value: UNSAFE_OR_ILLEGAL_PRODUCTS
+        - description: null
+          is_deprecated: null
+          value: VIOLENCE
+        - description: null
+          is_deprecated: null
+          value: OTHER
+  input_objects:
+    - name: UploadImageInput
+    - name: CreateAppReportInput
+    - name: FinishAppReportInput
+    - name: TmpInsertAppReport
+    - name: ConcludeAppReportInvestigationInput
+    - name: SetAppReportAppealInput
+    - name: ChangeAppReportStatusInput
+  objects:
+    - name: ResetClientOutput
+    - name: ResetAPIOutput
+    - name: InviteTeamMembersOutput
+    - name: PresignedPost
+    - name: GetUploadedImageOutput
+    - name: ImageUrls
+    - name: ImageGetAllUnverifiedImagesResponse
+    - name: ImageGetAllUnverifiedImagesOutput
+    - name: PresignedPostOutput
+    - name: DeleteImageOutput
+    - name: VerifyAppOutput
+    - name: ImageGetAppReviewImagesOutput
+    - name: InvalidateCacheOutput
+    - name: CreateNewDraftOutput
+    - name: ValidateLocalisationOutput
+    - name: BanAppOutput
+    - name: CreateAppReportOutput
+    - name: UnbanAppOutput
+    - name: FinishAppReportOutput
+    - name: TmpInsertAppReportOutput
+    - name: ConcludeAppReportInvestigationOutput
+    - name: SetAppReportAppealOutput
+    - name: ChangeAppReportStatusOutput
+  scalars: []

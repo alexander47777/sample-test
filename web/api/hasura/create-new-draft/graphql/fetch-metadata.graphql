@@ -1,0 +1,48 @@
+query FetchAppMetadata($team_id: String!, $app_id: String!, $user_id: String!) {
+  app(
+    where: {
+      id: { _eq: $app_id }
+      is_banned: { _eq: false }
+      team: {
+        id: { _eq: $team_id }
+        memberships: { user_id: { _eq: $user_id }, role: { _neq: MEMBER } }
+      }
+    }
+  ) {
+    verified_app_metadata: app_metadata(
+      where: { verification_status: { _eq: "verified" } }
+    ) {
+      id
+      app_id
+      name
+      logo_img_url
+      hero_image_url
+      meta_tag_image_url
+      showcase_img_urls
+      content_card_image_url
+      description
+      world_app_description
+      category
+      is_developer_allow_listing
+      world_app_button_text
+      integration_url
+      app_website_url
+      source_code_url
+      verification_status
+      app_mode
+      whitelisted_addresses
+      support_link
+      supported_countries
+      supported_languages
+      short_name
+      associated_domains
+      contracts
+      permit2_tokens
+      can_import_all_contacts
+      is_allowed_unlimited_notifications
+      max_notifications_per_day
+      is_android_only
+      is_for_humans_only
+    }
+  }
+}

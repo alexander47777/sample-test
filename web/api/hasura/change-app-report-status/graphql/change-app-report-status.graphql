@@ -1,0 +1,9 @@
+mutation ChangeAppReportStatus($updates: [app_report_updates!]!) {
+  update_app_report_many(updates: $updates) {
+    affected_rows
+    returning {
+      id
+      __typename
+    }
+  }
+}

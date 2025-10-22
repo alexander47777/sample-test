@@ -1,0 +1,59 @@
+table:
+  name: invite
+  schema: public
+object_relationships:
+  - name: team
+    using:
+      foreign_key_constraint_on: team_id
+insert_permissions:
+  - role: service
+    permission:
+      check: {}
+      columns:
+        - email
+        - team_id
+select_permissions:
+  - role: service
+    permission:
+      columns:
+        - id
+        - team_id
+        - email
+        - expires_at
+      filter: {}
+  - role: user
+    permission:
+      columns:
+        - email
+        - expires_at
+        - id
+        - team_id
+      filter:
+        team:
+          memberships:
+            _and:
+              - role:
+                  _eq: OWNER
+              - user_id:
+                  _eq: X-Hasura-User-Id
+update_permissions:
+  - role: service
+    permission:
+      columns:
+        - expires_at
+      filter: {}
+      check: null
+delete_permissions:
+  - role: service
+    permission:
+      filter: {}
+  - role: user
+    permission:
+      filter:
+        team:
+          memberships:
+            _and:
+              - role:
+                  _eq: OWNER
+              - user_id:
+                  _eq: X-Hasura-User-Id

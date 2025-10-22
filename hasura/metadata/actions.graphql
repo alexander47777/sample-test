@@ -1,0 +1,307 @@
+type Mutation {
+  ban_app(app_id: String!): BanAppOutput!
+}
+
+type Mutation {
+  change_app_report_status(
+    input: ChangeAppReportStatusInput!
+  ): ChangeAppReportStatusOutput
+}
+
+type Mutation {
+  create_app_report(input: CreateAppReportInput!): CreateAppReportOutput
+}
+
+type Mutation {
+  create_new_draft(app_id: String!, team_id: String!): CreateNewDraftOutput
+}
+
+type Mutation {
+  delete_unverified_images(app_id: String!): DeleteImageOutput
+}
+
+type Query {
+  get_all_unverified_images(
+    app_id: String!
+    team_id: String!
+    locale: String
+  ): ImageGetAllUnverifiedImagesOutput
+}
+
+type Query {
+  get_app_review_images(
+    app_id: String!
+    locale: String
+  ): ImageGetAppReviewImagesOutput
+}
+
+type Query {
+  get_uploaded_image(
+    app_id: String!
+    image_type: String!
+    content_type_ending: String!
+    team_id: String!
+    locale: String
+  ): GetUploadedImageOutput
+}
+
+type Mutation {
+  invalidate_cache: InvalidateCacheOutput
+}
+
+type Mutation {
+  invite_team_members(
+    emails: [String!]
+    team_id: String!
+  ): InviteTeamMembersOutput
+}
+
+type Mutation {
+  reset_api_key(id: String!, team_id: String!): ResetAPIOutput
+}
+
+type Mutation {
+  reset_client_secret(app_id: String!, team_id: String!): ResetClientOutput
+}
+
+type Mutation {
+  unban_app(app_id: String!): UnbanAppOutput
+}
+
+type Query {
+  upload_image(
+    app_id: String!
+    image_type: String!
+    content_type_ending: String!
+    team_id: String!
+    locale: String
+  ): PresignedPostOutput
+}
+
+type Mutation {
+  validate_localisation(
+    app_metadata_id: String!
+    team_id: String!
+  ): ValidateLocalisationOutput
+}
+
+type Mutation {
+  verify_app(
+    app_id: String!
+    reviewer_name: String!
+    is_reviewer_app_store_approved: Boolean!
+    is_reviewer_world_app_approved: Boolean!
+  ): VerifyAppOutput
+}
+
+enum ReviewStatusEnum {
+  OPEN
+  NOT_ESCALATE
+  ESCALATE
+  APPEALED
+  REVIEW
+  ACTIONED
+}
+
+enum PurposeEnum {
+  ILLEGAL_CONTENT
+  TOS_VIOLATION
+  OTHER
+}
+
+enum ViolationEnum {
+  FEATURES
+  CORE_FUNCTIONALITY
+  MALICIOUS_APP
+}
+
+enum IllegalContentCategoryEnum {
+  PROVIDES_OR_FACILITATES_AN_ILLEGAL_SERVICE
+  INCITES_TERRORISM_OR_VIOLENCE
+  ILLEGAL_HATE_SPEECH
+  CHILD_SEXUAL_ABUSE
+  VIOLATES_INTELLECTUAL_PROPERTY_RIGHTS
+  VIOLATES_CONSUMER_PROTECTION_OR_PRIVACY_LAW
+  VIOLATES_ADVERTISING_LAW
+  OTHER
+}
+
+enum AppFlowOnCompleteEnum {
+  NONE
+  VERIFY
+}
+
+enum IllegalContentSubCategoryEnum {
+  DATA_PROTECTION_PRIVACY
+  DEFAMATION
+  ILLEGAL_OR_HARMFUL_SPEECH
+  NEGATIVE_EFFECTS_ON_CIVIC_DISCOURSE
+  NON_CONSENSUAL_BEHAVIOR
+  PORNOGRAPHY
+  PROTECTION_OF_MINORS
+  RISK_FOR_PUBLIC_SECURITY
+  SELF_HARM
+  UNSAFE_OR_ILLEGAL_PRODUCTS
+  VIOLENCE
+  OTHER
+}
+
+input UploadImageInput {
+  app_id: String!
+  team_id: String!
+  image_type: String!
+  content_type_ending: String!
+}
+
+input CreateAppReportInput {
+  app_id: String!
+  user_pkid: String!
+  reporter_email: String!
+  purpose: PurposeEnum!
+  violation: ViolationEnum
+  details: String
+  illegal_content_sub_category: IllegalContentSubCategoryEnum
+  illegal_content_legal_reason: String
+  illegal_content_description: String
+  illegal_content_country_code: String
+}
+
+input FinishAppReportInput {
+  app_report_id: String!
+  reviewed_by: String!
+  review_status: ReviewStatusEnum!
+  review_conclusion_reason: String!
+}
+
+input TmpInsertAppReport {
+  app_id: String!
+  user_id: String!
+  reporter_email: String!
+  details: String!
+}
+
+input ConcludeAppReportInvestigationInput {
+  app_report_id: String!
+  reviewed_by: String!
+  review_status: ReviewStatusEnum!
+  review_conclusion_reason: String
+}
+
+input SetAppReportAppealInput {
+  app_report_id: String!
+}
+
+input ChangeAppReportStatusUpdate {
+  app_report_id: String!
+  reviewed_by: String
+  review_status: ReviewStatusEnum!
+  review_conclusion_reason: String
+}
+
+input ChangeAppReportStatusInput {
+  updates: [ChangeAppReportStatusUpdate!]!
+}
+
+type ResetClientOutput {
+  client_secret: String!
+}
+
+type ResetAPIOutput {
+  api_key: String!
+}
+
+type InviteTeamMembersOutput {
+  emails: [String!]
+}
+
+type PresignedPost {
+  url: String!
+  stringifiedFields: String!
+}
+
+type GetUploadedImageOutput {
+  url: String!
+}
+
+type ImageUrls {
+  logo_img_url: String
+  hero_image_url: String
+  showcase_img_urls: [String]
+}
+
+type ImageGetAllUnverifiedImagesResponse {
+  urls: ImageUrls
+}
+
+type ImageGetAllUnverifiedImagesOutput {
+  logo_img_url: String
+  hero_image_url: String
+  meta_tag_image_url: String
+  showcase_img_urls: [String!]
+  content_card_image_url: String
+}
+
+type PresignedPostOutput {
+  url: String!
+  stringifiedFields: String!
+}
+
+type DeleteImageOutput {
+  success: Boolean
+}
+
+type VerifyAppOutput {
+  success: Boolean
+}
+
+type ImageGetAppReviewImagesOutput {
+  logo_img_url: String
+  hero_image_url: String
+  meta_tag_image_url: String
+  showcase_img_urls: [String!]
+  content_card_image_url: String
+}
+
+type InvalidateCacheOutput {
+  success: Boolean
+}
+
+type CreateNewDraftOutput {
+  success: Boolean
+}
+
+type ValidateLocalisationOutput {
+  success: Boolean
+}
+
+type BanAppOutput {
+  success: Boolean
+}
+
+type CreateAppReportOutput {
+  success: Boolean!
+}
+
+type UnbanAppOutput {
+  success: Boolean!
+}
+
+type FinishAppReportOutput {
+  successs: Boolean!
+}
+
+type TmpInsertAppReportOutput {
+  success: Boolean!
+}
+
+type ConcludeAppReportInvestigationOutput {
+  success: Boolean!
+}
+
+type SetAppReportAppealOutput {
+  success: Boolean!
+}
+
+type ChangeAppReportStatusOutput {
+  success: Boolean!
+}

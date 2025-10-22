@@ -1,0 +1,7 @@
+query FetchInvites($emails: [String!]!) {
+  invite(where: { email: { _in: $emails } }) {
+    id
+    email
+    team_id
+  }
+}

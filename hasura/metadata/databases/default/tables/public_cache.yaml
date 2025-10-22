@@ -1,0 +1,31 @@
+table:
+  name: cache
+  schema: public
+insert_permissions:
+  - role: service
+    permission:
+      check: {}
+      columns:
+        - key
+        - value
+select_permissions:
+  - role: service
+    permission:
+      columns:
+        - key
+        - value
+        - created_at
+        - updated_at
+        - id
+      filter: {}
+update_permissions:
+  - role: service
+    permission:
+      columns:
+        - value
+      filter: {}
+      check: null
+delete_permissions:
+  - role: service
+    permission:
+      filter: {}

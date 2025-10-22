@@ -1,0 +1,58 @@
+query GetAppMetadata($app_id: String!, $locale: String!) {
+  app_metadata(
+    where: { app_id: { _eq: $app_id }, app: { is_banned: { _eq: false } } }
+  ) {
+    id
+    name
+    short_name
+    app_id
+    logo_img_url
+    hero_image_url
+    meta_tag_image_url
+    showcase_img_urls
+    content_card_image_url
+    world_app_description
+    world_app_button_text
+    whitelisted_addresses
+    app_mode
+    description
+    category
+    integration_url
+    app_website_url
+    source_code_url
+    support_link
+    supported_countries
+    supported_languages
+    associated_domains
+    contracts
+    permit2_tokens
+    can_import_all_contacts
+    is_reviewer_world_app_approved
+    is_reviewer_app_store_approved
+    verification_status
+    is_allowed_unlimited_notifications
+    max_notifications_per_day
+    is_android_only
+    is_for_humans_only
+    should_uninstall_on_delist
+    localisations(where: { locale: { _eq: $locale } }) {
+      name
+      world_app_button_text
+      world_app_description
+      short_name
+      description
+      hero_image_url
+      meta_tag_image_url
+      showcase_img_urls
+    }
+    app {
+      team {
+        name
+        id
+      }
+      rating_sum
+      rating_count
+      deleted_at
+    }
+  }
+}

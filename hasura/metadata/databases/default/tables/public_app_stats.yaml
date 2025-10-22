@@ -1,0 +1,57 @@
+table:
+  name: app_stats
+  schema: public
+object_relationships:
+  - name: app
+    using:
+      foreign_key_constraint_on: app_id
+insert_permissions:
+  - role: service
+    permission:
+      check: {}
+      columns:
+        - app_id
+        - date
+        - unique_users
+        - verifications
+    comment: ""
+select_permissions:
+  - role: service
+    permission:
+      columns:
+        - app_id
+        - date
+        - unique_users
+        - verifications
+      filter: {}
+    comment: ""
+  - role: user
+    permission:
+      columns:
+        - app_id
+        - date
+        - unique_users
+        - verifications
+      filter:
+        app:
+          team:
+            memberships:
+              user_id:
+                _eq: X-Hasura-User-Id
+    comment: ""
+update_permissions:
+  - role: service
+    permission:
+      columns:
+        - app_id
+        - date
+        - unique_users
+        - verifications
+      filter: {}
+      check: {}
+    comment: ""
+delete_permissions:
+  - role: service
+    permission:
+      filter: {}
+    comment: ""

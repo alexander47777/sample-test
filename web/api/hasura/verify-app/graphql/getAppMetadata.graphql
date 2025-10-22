@@ -1,0 +1,21 @@
+query GetAppMetadata($app_id: String!) {
+  app(where: { id: { _eq: $app_id } }) {
+    first_verified_at
+    app_metadata {
+      id
+      logo_img_url
+      showcase_img_urls
+      hero_image_url
+      meta_tag_image_url
+      content_card_image_url
+      verification_status
+      localisations {
+        id
+        locale
+        hero_image_url
+        showcase_img_urls
+        meta_tag_image_url
+      }
+    }
+  }
+}

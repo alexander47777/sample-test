@@ -1,0 +1,38 @@
+table:
+  name: auth_code
+  schema: public
+insert_permissions:
+  - role: service
+    permission:
+      check: {}
+      columns:
+        - app_id
+        - auth_code
+        - code_challenge
+        - code_challenge_method
+        - verification_level
+        - expires_at
+        - nonce
+        - nullifier_hash
+        - scope
+        - redirect_uri
+select_permissions:
+  - role: service
+    permission:
+      columns:
+        - app_id
+        - auth_code
+        - code_challenge
+        - code_challenge_method
+        - verification_level
+        - expires_at
+        - id
+        - nonce
+        - nullifier_hash
+        - scope
+        - redirect_uri
+      filter: {}
+delete_permissions:
+  - role: service
+    permission:
+      filter: {}

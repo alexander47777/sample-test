@@ -1,0 +1,11 @@
+Dockerfile
+.dockerignore
+node_modules
+npm-debug.log
+README.md
+.next
+.git
+.env.test
+# Added by SEC-1406 patch
+.gitignore
+.env*

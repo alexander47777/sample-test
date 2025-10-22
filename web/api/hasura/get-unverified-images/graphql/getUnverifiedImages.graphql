@@ -1,0 +1,35 @@
+query GetUnverifiedImages(
+  $team_id: String!
+  $app_id: String!
+  $user_id: String!
+  $locale: String
+) {
+  app(
+    where: {
+      id: { _eq: $app_id }
+      team: {
+        id: { _eq: $team_id }
+        memberships: { user_id: { _eq: $user_id } }
+      }
+    }
+  ) {
+    app_metadata(where: { verification_status: { _neq: "verified" } }) {
+      logo_img_url
+      hero_image_url
+      meta_tag_image_url
+      showcase_img_urls
+      content_card_image_url
+      localisations(where: { locale: { _eq: $locale } }) {
+        hero_image_url
+        meta_tag_image_url
+        showcase_img_urls
+      }
+    }
+    team {
+      memberships {
+        user_id
+        role
+      }
+    }
+  }
+}

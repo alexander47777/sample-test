@@ -1,0 +1,25 @@
+table:
+  name: jwks
+  schema: public
+insert_permissions:
+  - role: service
+    permission:
+      check: {}
+      columns:
+        - expires_at
+        - kms_id
+        - public_jwk
+select_permissions:
+  - role: service
+    permission:
+      columns:
+        - created_at
+        - expires_at
+        - id
+        - kms_id
+        - public_jwk
+      filter: {}
+delete_permissions:
+  - role: service
+    permission:
+      filter: {}

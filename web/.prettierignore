@@ -1,0 +1,7 @@
+.next/
+/out/
+/build
+pnpm-lock.yaml
+/graphql
+/test-results
+playwright-report/

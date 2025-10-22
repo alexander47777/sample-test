@@ -1,0 +1,148 @@
+import { errorResponse } from "@/api/helpers/errors";
+import { corsHandler } from "@/api/helpers/utils";
+import { validateRequestSchema } from "@/api/helpers/validate-request-schema";
+import { logger } from "@/lib/logger";
+import { appIdSchema } from "@/lib/schema";
+import { TransactionTypes } from "@/lib/types";
+import { fetchWithTimeout } from "@/lib/utils";
+import { createSignedFetcher } from "aws-sigv4-fetch";
+import { NextRequest, NextResponse } from "next/server";
+import * as yup from "yup";
+
+const transactionIdRegex = /^0x[a-f0-9]{64}$/;
+
+const schema = yup
+  .object({
+    app_id: appIdSchema,
+    type: yup.string().oneOf(Object.values(TransactionTypes)).required(),
+  })
+  .noUnknown();
+
+const corsMethods = ["GET", "OPTIONS"];
+
+export const GET = async (
+  req: NextRequest,
+  { params: routeParams }: { params: { transaction_id: string } },
+) => {
+  const { searchParams } = new URL(req.url);
+  const transactionId = routeParams.transaction_id;
+
+  // Add transaction_id validation
+  if (!transactionIdRegex.test(transactionId)) {
+    return corsHandler(
+      errorResponse({
+        statusCode: 400,
+        code: "invalid_parameter",
+        detail: "Invalid transaction ID",
+        attribute: "transaction_id",
+        req,
+      }),
+      corsMethods,
+    );
+  }
+
+  const { isValid, parsedParams, handleError } = await validateRequestSchema({
+    schema,
+    value: {
+      app_id: searchParams.get("app_id"),
+      type: searchParams.get("type") ?? TransactionTypes.Payment,
+    },
+  });
+
+  if (!isValid) {
+    return handleError(req);
+  }
+
+  const { app_id: appId, type } = parsedParams;
+
+  let signedFetch = global.TransactionSignedFetcher;
+  if (!signedFetch) {
+    signedFetch = createSignedFetcher({
+      service: "execute-api",
+      region: process.env.TRANSACTION_BACKEND_REGION,
+    });
+  }
+  const url =
+    type === TransactionTypes.Payment
+      ? `${process.env.NEXT_SERVER_INTERNAL_PAYMENTS_ENDPOINT}/miniapp?miniapp-id=${appId}&transaction-id=${transactionId}`
+      : `${process.env.NEXT_SERVER_INTERNAL_PAYMENTS_ENDPOINT}/miniapp-actions?miniapp-id=${appId}&transaction-id=${transactionId}`;
+
+  let res: Response;
+  try {
+    res = await fetchWithTimeout(
+      url,
+      {
+        method: "GET",
+        headers: {
+          "User-Agent": req.headers.get("user-agent") ?? "DevPortal/1.0",
+          "Content-Type": "application/json",
+        },
+      },
+      5000, // fetch timeout in ms
+      signedFetch,
+    );
+  } catch (error) {
+    return corsHandler(
+      errorResponse({
+        statusCode: 500,
+        code: "internal_api_error",
+        detail: "Transaction fetch to backend failed",
+        attribute: "transaction",
+        req,
+        app_id: appId,
+      }),
+      corsMethods,
+    );
+  }
+
+  if (!res.ok) {
+    let errorBody: any = {};
+    try {
+      if (res.headers.get("content-type")?.includes("application/json")) {
+        errorBody = await res.json();
+      }
+    } catch (e) {
+      logger.warn("Error parsing transaction response body", {
+        error: e,
+      });
+    }
+
+    return corsHandler(
+      errorResponse({
+        statusCode: res.status,
+        code: errorBody?.error?.code ?? "internal_api_error",
+        detail:
+          errorBody?.error?.message ?? "Transaction fetch to backend failed",
+        attribute: "transaction",
+        req,
+        app_id: appId,
+      }),
+      corsMethods,
+    );
+  }
+
+  const data = await res.json();
+
+  if (data?.result?.transactions.length !== 0) {
+    const transaction = data?.result?.transactions[0];
+    const response = NextResponse.json(transaction, { status: 200 });
+    return corsHandler(response, corsMethods);
+  } else {
+    return corsHandler(
+      errorResponse({
+        statusCode: 404,
+        code: "not_found",
+        detail:
+          "Transaction not found. Please double check your transaction ID and the transaction belongs to this app_id.",
+        attribute: "transaction",
+        req,
+        app_id: appId,
+      }),
+      corsMethods,
+    );
+  }
+};
+
+export async function OPTIONS(request: NextRequest) {
+  return corsHandler(new NextResponse(null, { status: 204 }), corsMethods);
+}

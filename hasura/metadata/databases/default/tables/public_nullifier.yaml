@@ -1,0 +1,79 @@
+table:
+  name: nullifier
+  schema: public
+object_relationships:
+  - name: action
+    using:
+      foreign_key_constraint_on: action_id
+insert_permissions:
+  - role: service
+    permission:
+      check:
+        action:
+          app:
+            deleted_at:
+              _is_null: true
+      columns:
+        - action_id
+        - id
+        - nullifier_hash
+        - nullifier_hash_int
+        - uses
+select_permissions:
+  - role: api_key
+    permission:
+      columns:
+        - action_id
+        - created_at
+        - id
+        - nullifier_hash
+      filter:
+        action:
+          app:
+            team_id:
+              _eq: X-Hasura-Team-Id
+  - role: service
+    permission:
+      columns:
+        - action_id
+        - created_at
+        - id
+        - nullifier_hash
+        - nullifier_hash_int
+        - uses
+      filter:
+        action:
+          app:
+            deleted_at:
+              _is_null: true
+  - role: user
+    permission:
+      columns:
+        - id
+        - action_id
+        - created_at
+        - updated_at
+        - nullifier_hash
+        - uses
+      filter:
+        action:
+          app:
+            _and:
+              - team:
+                  memberships:
+                    user_id:
+                      _eq: X-Hasura-User-Id
+              - deleted_at:
+                  _is_null: true
+      allow_aggregations: true
+update_permissions:
+  - role: service
+    permission:
+      columns:
+        - uses
+      filter:
+        action:
+          app:
+            deleted_at:
+              _is_null: true
+      check: null

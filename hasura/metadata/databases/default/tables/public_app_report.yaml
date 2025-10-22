@@ -1,0 +1,82 @@
+table:
+  name: app_report
+  schema: public
+object_relationships:
+  - name: app
+    using:
+      foreign_key_constraint_on: app_id
+insert_permissions:
+  - role: reviewer
+    permission:
+      check: {}
+      columns:
+        - app_id
+        - details
+        - id
+        - illegal_content_country_code
+        - illegal_content_description
+        - illegal_content_legal_reason
+        - illegal_content_sub_category
+        - purpose
+        - reporter_email
+        - review_status
+        - user_pkid
+        - violation
+    comment: ""
+  - role: service
+    permission:
+      check: {}
+      columns:
+        - app_id
+        - details
+        - illegal_content_country_code
+        - illegal_content_description
+        - illegal_content_legal_reason
+        - illegal_content_sub_category
+        - purpose
+        - reporter_email
+        - review_conclusion_reason
+        - review_status
+        - reviewed_by
+        - user_pkid
+        - violation
+    comment: ""
+select_permissions:
+  - role: reviewer
+    permission:
+      columns:
+        - app_id
+        - created_at
+        - details
+        - id
+        - illegal_content_country_code
+        - illegal_content_description
+        - illegal_content_legal_reason
+        - illegal_content_sub_category
+        - purpose
+        - reporter_email
+        - review_conclusion_reason
+        - review_status
+        - reviewed_at
+        - reviewed_by
+        - user_pkid
+        - violation
+      filter: {}
+    comment: ""
+  - role: service
+    permission:
+      columns:
+        - id
+      filter: {}
+    comment: ""
+update_permissions:
+  - role: service
+    permission:
+      columns:
+        - review_conclusion_reason
+        - review_status
+        - reviewed_at
+        - reviewed_by
+      filter: {}
+      check: null
+    comment: ""
